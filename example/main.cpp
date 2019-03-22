@@ -14,10 +14,10 @@ int main() {
     gettimeofday(&tv, NULL);
 
     uint64_t now_ms = tv.tv_sec*1000 + tv.tv_usec/1000;
-    std::cout << now_ms << std::endl; 
+    //std::cout << now_ms << std::endl; 
     DcTimeWheel time_wheel(60 * 1000, now_ms);
 
-    for (int i = 0; i < 30; i+=3) {
+    for (int i = 0; i < 10; i++) {
         {
         TestItem* tmp = new TestItem();
         tmp->i_ = i;
@@ -42,13 +42,18 @@ int main() {
         struct timeval tv;
         gettimeofday(&tv, NULL);
 
-        uint64_t now_ms = tv.tv_sec*1000 + tv.tv_usec/1000;
-        std::cout << now_ms << std::endl; 
-        std::vector<DcTimer*> ret = time_wheel.PeriodicCheckExpired(now_ms);
+        uint64_t now_ms1 = tv.tv_sec*1000 + tv.tv_usec/1000;
+        //std::cout << now_ms << std::endl; 
+
+        if (now_ms1 - now_ms > 20 * 1000) {
+            break;
+        }
+
+        std::vector<DcTimer*> ret = time_wheel.PeriodicCheckExpired(now_ms1);
         for (uint32_t i = 0; i < ret.size(); i++) {
 
             std::cout << ((TestItem*)ret[i])->i_ << std::endl; 
-
+            delete ((TestItem*)ret[i]);
         }
 
         usleep(100 * 1000);
